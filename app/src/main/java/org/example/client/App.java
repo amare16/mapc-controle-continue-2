@@ -3,12 +3,62 @@
  */
 package org.example.client;
 
+import org.example.metier.api.Query;
+import org.example.metier.api.QueryVisitor;
+import org.example.metier.impl.Person;
+import org.example.metier.impl.SelectionQuery;
+import org.example.metier.impl.SetQuery;
+import org.example.metier.impl.UnionQuery;
+import org.example.metier.impl.visitors.CostCalculator;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        Set<Person> persons = Set.of(
+                new Person("alice", 20, 2000),
+                new Person("bob", 17, 100),
+                new Person("charles", 17, 2600),
+                new Person("david", 70, 1000),
+                new Person("elisabeth", 72, 900)
+        );
+
+        // Base query
+        Query baseQuery = new SetQuery(persons);
+
+        // Define other queries
+        Query minorsQuery = new SelectionQuery(baseQuery, p -> p.getAge() < 18);
+        Query retireesQuery = new SelectionQuery(baseQuery, p -> p.getAge() > 64);
+        Query richMinorsQuery = new SelectionQuery(minorsQuery, p -> p.getSalaire() > 2500);
+        Query poorRetireesQuery = new SelectionQuery(retireesQuery, p -> p.getSalaire() < 1000);
+        Query outliersQuery = new UnionQuery(List.of(richMinorsQuery, poorRetireesQuery));
+
+        // Visitor for cost calculation
+        CostCalculator calculator = new CostCalculator();
+
+        // Execute queries and print results
+        printQueryResult(baseQuery, calculator);
+        printQueryResult(minorsQuery, calculator);
+        printQueryResult(retireesQuery, calculator);
+        printQueryResult(richMinorsQuery, calculator);
+        printQueryResult(poorRetireesQuery, calculator);
+        printQueryResult(outliersQuery, calculator);
     }
+
+    private static void printQueryResult(Query query, QueryVisitor visitor) {
+        // Execute and sort results by name
+        List<Person> result = new ArrayList<>(query.execute());
+        result.sort(Comparator.comparing(Person::getNom));
+
+        // Print query result and depth
+        System.out.println(result + "(" + query.getDepth() + ")");
+
+        // Print cost
+        System.out.println(query.accept(visitor));
+    }
+
 }

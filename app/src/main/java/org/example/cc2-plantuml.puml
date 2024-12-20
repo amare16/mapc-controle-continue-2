@@ -1,0 +1,52 @@
+@startuml
+class Person {
+    - name: String
+    - age: int
+    - salary: double
+    + getName(): String
+    + getAge(): int
+    + getSalary(): double
+    + toString(): String
+}
+
+interface Query {
+    + execute(): Set<Person>
+    + getDepth(): int
+    + getSubQueries(): List<Query>
+}
+
+class SetQuery {
+    - people: Set<Person>
+    + execute(): Set<Person>
+    + getDepth(): int
+    + getSubQueries(): List<Query>
+}
+
+class SelectionQuery {
+    - subQuery: Query
+    - predicate: Predicate<Person>
+    + execute(): Set<Person>
+    + getDepth(): int
+    + getSubQueries(): List<Query>
+}
+
+class DifferenceQuery {
+    - left: Query
+    - right: Query
+    + execute(): Set<Person>
+    + getDepth(): int
+    + getSubQueries(): List<Query>
+}
+
+class UnionQuery {
+    - subQueries: List<Query>
+    + execute(): Set<Person>
+    + getDepth(): int
+    + getSubQueries(): List<Query>
+}
+
+Query <|.. SetQuery
+Query <|.. SelectionQuery
+Query <|.. DifferenceQuery
+Query <|.. UnionQuery
+@enduml
