@@ -1,0 +1,43 @@
+# Ignore build output directories
+/build/
+/out/
+
+# Gradle Wrapper files
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# IDE-specific files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Dependency cache
+**/node_modules/
+**/.cache/
+
+# Java-specific files
+*.class
+*.jar
+*.war
+*.ear
+
+# Test results
+/test-results/
+/reports/
